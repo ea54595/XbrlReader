@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'FinancialAnalize' target in the 'FinancialAnalize' project
+//
+
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+#endif

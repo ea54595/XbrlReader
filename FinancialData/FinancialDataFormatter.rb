@@ -1,45 +1,75 @@
 #$KCODE="utf8"
 require File.expand_path(File.dirname(__FILE__) + "/FinancialData")
-require File.expand_path(File.dirname(__FILE__) + "/StockPriceGetter")
-require "csv"
-require "kconv"
+require 'csv'
+require 'kconv'
+require 'jpstock'
+require File.expand_path(File.dirname(__FILE__) + "/Formats/CashAndCashEquivalents")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/OtherFinancialAsset")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/TradeAccountsReceivable")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/Inventories")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/AccountsPayableAndAccrued")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/ShortTermDebt")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/LongTermDebt")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/TotalCurrentLiabilities")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/TreasuryStock")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/TotalEquity")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/TotalLiabilitiesAndEquity")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/ShareholdersEquity")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/NetOperationgRevenues")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/CostOfSales")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/CashAndCashEquivalents")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/GrossProfit")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/SellingGeneralAndAdministrativeExpenses")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/OperatingIncome")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/InterestExpenses")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/IncomeTaxes")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/CurrentNetIncome")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/EarningsPerShare")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/AverageSharesOutstanding")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/DepreciationCost")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/NetCashProvidedByOperatingActivities")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/CapitalExpenditure")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/PurchasesOfStockForTreasury")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/Dividends")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/NameRepresentative")
+require File.expand_path(File.dirname(__FILE__) + "/Formats/StockPrice")
 
 class FinancialDataFormatter
 
   def initialize(f_data, stock_code)
     @base = f_data
-    @result = f_data.result
+    result = f_data.result
     @stock_code = stock_code
-    @CashAndCashEquivalents 
-    @OtherFinancialAsset
-    @TradeAccountsReceivable
-    @Inventories
-    @AccountsPayableAndAccrued
-    @ShortTermDebt
-    @LongTermDebt
-    @TotalCurrentLiabikities
-    @TreasuryStock
-    @TotalEquity
-    @TotalLiabilitiesAndEquity 
-    @ShareholdersEquity
-    @NetOperationgRevenues 
-    @CostOfSales
-    @GrossProfit
-    @SellingGeneralAndAdministrativeExpenses
-    @OperatingIncome
-    @InterestExpenses
-    @IncomeTaxes
-    @CurrentNetIncome
-    @EarningsPerShare
-    @AverageSharesOutstanding
-    @DepreciationCost
-    @NetCashProvidedByOperatingActivities
-    @CapitalExpenditure
-    @PurchasesOfStockForTreasury
-    @Dividends
-    @NameRepresentative
-    @stockPrice
-    set_financial_data
+    
+    @CashAndCashEquivalents = CashAndCashEquivalents.calculate(result)
+    @OtherFinancialAsset = OtherFinancialAsset.calculate(result)
+    @TradeAccountsReceivable = TradeAccountsReceivable.calculate(result)
+    @Inventories = Inventories.calculate(result)
+    @AccountsPayableAndAccrued = AccountsPayableAndAccrued.calculate(result)
+    @ShortTermDebt = ShortTermDebt.calculate(result)
+    @LongTermDebt = LongTermDebt.calculate(result)
+    @TotalCurrentLiabilities = TotalCurrentLiabilities.calculate(result)
+    @TreasuryStock = TreasuryStock.calculate(result)
+    @TotalEquity = TotalEquity.calculate(result)
+    @TotalLiabilitiesAndEquity = TotalLiabilitiesAndEquity.calculate(result)
+    @ShareholdersEquity = ShareholdersEquity.calculate(result)
+    @NetOperationgRevenues = NetOperationgRevenues.calculate(result)
+    @CostOfSales = CostOfSales.calculate(result)
+    @GrossProfit = GrossProfit.calculate(result)
+    @SellingGeneralAndAdministrativeExpenses = SellingGeneralAndAdministrativeExpenses.calculate(result)
+    @OperatingIncome = OperatingIncome.calculate(result)
+    @InterestExpenses = InterestExpenses.calculate(result)
+    @IncomeTaxes = IncomeTaxes.calculate(result)
+    @CurrentNetIncome = CurrentNetIncome.calculate(result)
+    @EarningsPerShare = EarningsPerShare.calculate(result)
+    @AverageSharesOutstanding = AverageSharesOutstanding.calculate(result)
+    @DepreciationCost = DepreciationCost.calculate(result)
+    @NetCashProvidedByOperatingActivities = NetCashProvidedByOperatingActivities.calculate(result)
+    @CapitalExpenditure = CapitalExpenditure.calculate(result)
+    @PurchasesOfStockForTreasury = PurchasesOfStockForTreasury.calculate(result)
+    @Dividends = Dividends.calculate(result)
+    @NameRepresentative = NameRepresentative.calculate(result)
+    @StockPrice = StockPrice.calculate(stock_code)
   end
 
   def output_csv
@@ -94,27 +124,6 @@ class FinancialDataFormatter
     puts "exit output csv"
   end
 
-  private
-  def check_and_merge(merge_target_datas)
-    if merge_target_datas.size == 0
-      return nil
-    end
-    merged = {}
-    merge_target_datas.each do |data|
-      if data == nil
-        next
-      end
-      data.each do |d|
-        if merged[d[:year]].nil? 
-          merged[d[:year]] = parse_float(d[:value])
-        else
-          merged[d[:year]] =  parse_float(merged[d[:year]]) + parse_float(d[:value])
-        end
-      end
-    end
-    return merged
-  end
-
   def insert_csv_stock_price
     col = []
     col << "株価".tosjis
@@ -123,6 +132,7 @@ class FinancialDataFormatter
     end
     col
   end
+  private :insert_csv_stock_price
 
   def parse_float(v) 
     if v == nil
@@ -136,46 +146,7 @@ class FinancialDataFormatter
     end
     v.to_f
   end
-
-  def set_financial_data
-    set_cash_and_cash_equivalents
-    set_other_financial_asset
-    set_trade_accounts_receivable
-    set_inventories
-    set_accounts_payable_and_accrued
-    set_short_term_debt
-    set_long_term_debt
-    set_liabilities
-    set_treasury_stock
-    set_total_equity
-    set_total_liabilities_and_equity
-    set_shareholders_equity
-    set_net_operationg_revenues
-    set_cost_of_sales
-    set_gross_profit
-    set_selling_general_and_administrative_expenses
-    set_operating_income
-    set_interest_expenses
-    set_income_taxes
-    set_current_net_income
-    set_earnings_per_share
-    set_number_of_outstanding_shares
-    set_depreciation
-    set_net_cash_provided_by_operating_activities
-    set_capital_expenditure
-    set_purchase_of_treasury
-    set_dividend
-    set_name_representative
-    set_stock_price
-  end
-
-  def has_result(result, name)
-    index = result.index{ |v| v[0][:name] == name}
-    if index.nil?
-      return nil
-    end
-    result[index]
-  end
+  private :parse_float
 
   def inset_csv(values, labels, name)
     col = []
@@ -198,6 +169,7 @@ class FinancialDataFormatter
     end
     col
   end
+  private :inset_csv
 
   def inset_csv_sjis(values, labels, name)
     col = []
@@ -215,198 +187,6 @@ class FinancialDataFormatter
     end
     col
   end
-  
-  def set_cash_and_cash_equivalents
-    @CashAndCashEquivalents = check_and_merge([
-      has_result(@result, :CashAndDeposits)
-    ])
-  end
+  private :inset_csv_sjis
 
-  def set_other_financial_asset
-    @OtherFinancialAsset = check_and_merge([
-      has_result(@result,:ShortTermInvestmentSecurities),
-      has_result(@result,:OperationalInvestmentSecuritiesCA),
-    ])
-  end
-
-  def set_trade_accounts_receivable
-    @TradeAccountsReceivable = check_and_merge([
-        has_result(@result, :NotesAndAccountsReceivableTrade),
-        has_result(@result, :AccountsReceivableTrade)
-    ])
-  end
-
-  def set_inventories
-    @Inventories = check_and_merge([
-      has_result(@result, :MerchandiseAndFinishedGoods),
-      has_result(@result, :WorkInProcess), 
-      has_result(@result, :RawMaterialsAndSupplies), 
-      has_result(@result, :Inventories)
-    ])  
-  end
-
-  def set_accounts_payable_and_accrued
-    @AccountsPayableAndAccrued = check_and_merge([
-      has_result(@result, :AccountsPayableTrade),
-      has_result(@result, :NotesAndAccountsPayableTrade),
-    ])
-  end
-
-  def set_short_term_debt
-    @ShortTermDebt = check_and_merge([
-      has_result(@result, :ShortTermLoansPayable),
-      has_result(@result, :CurrentPortionOfLongTermLoansPayable),
-      has_result(@result, :CurrentPortionOfBonds),
-    ])
-  end
-
-  def set_long_term_debt
-    @LongTermDebt = check_and_merge([
-      has_result(@result, :BondsPayable),
-      has_result(@result, :ConvertibleBondTypeBondsWithSubscriptionRightsToShares),
-      has_result(@result, :LongTermLoansPayable),
-    ])
-  end
-  
-  def set_liabilities
-    @TotalCurrentLiabikities = check_and_merge([
-      has_result(@result, :Liabilities)
-    ])
-  end
-
-  def set_treasury_stock
-    @TreasuryStock = check_and_merge([
-      has_result(@result, :TreasuryStock)
-    ])
-  end
-  
-  def set_total_equity
-    @TotalEquity = check_and_merge([
-      has_result(@result, :ShareholdersEquity) 
-    ])   
-  end
-
-  def set_total_liabilities_and_equity
-    @TotalLiabilitiesAndEquity =  check_and_merge([ 
-      has_result(@result, :Assets) 
-    ])
-  end
-
-  def set_shareholders_equity
-    @ShareholdersEquity = check_and_merge([ 
-      has_result(@result, :ShareholdersEquity) 
-    ])
-  end
-
-  def set_net_operationg_revenues
-    net_operationg_revenues = has_result(@result, :NetSales) 
-    if net_operationg_revenues == nil
-      net_operationg_revenues = has_result(@result, :OperatingRevenue1) 
-    end
-    @NetOperationgRevenues = check_and_merge([
-       net_operationg_revenues
-    ])
-  end
-
-  def set_cost_of_sales
-    cost_of_sales = has_result(@result, :CostOfSales) 
-    if cost_of_sales.nil?
-      cost_of_sales = has_result(@result, :OperatingExpenses2) 
-    end
-    @CostOfSales = check_and_merge([
-      cost_of_sales
-    ])
-  end
-
-  def set_gross_profit
-    @GrossProfit = check_and_merge([
-      has_result(@result, :GrossProfit)
-    ]) 
-  end
-
-  def set_selling_general_and_administrative_expenses
-    @SellingGeneralAndAdministrativeExpenses = check_and_merge([
-      has_result(@result, :SellingGeneralAndAdministrativeExpenses)  
-    ])
-  end
-
-  def set_operating_income
-    @OperatingIncome = check_and_merge([
-      has_result(@result, :OperatingIncome)  
-    ])
-  end
-
-  def set_interest_expenses
-    @InterestExpenses = check_and_merge([ 
-      has_result(@result, :InterestExpensesNOE) 
-    ])
-  end
-
-  def set_income_taxes
-    @IncomeTaxes = check_and_merge([ 
-      has_result(@result, :IncomeTaxes)      
-    ])
-  end
-
-  def set_current_net_income
-    @CurrentNetIncome = check_and_merge([
-      has_result(@result, :NetIncomeNA)
-    ])
-  end
-
-  def set_earnings_per_share
-    @EarningsPerShare = check_and_merge([ 
-      has_result(@result, :NetIncomePerShare),
-      has_result(@result, :NetIncomePerShareUS),
-      has_result(@result, :BasicEarningsPerShareIFRS)
-    ])
-  end
-
-  def set_number_of_outstanding_shares
-    @AverageSharesOutstanding = check_and_merge([
-      has_result(@result, :NumberOfIssuedAndOutstandingSharesAtTheEndOfFiscalYearIncludingTreasuryStock) 
-    ])
-  end
-
-  def set_depreciation
-    @DepreciationCost = check_and_merge([
-      has_result(@result, :DepreciationAndAmortizationOpeCF)
-    ])
-  end
-
-  def set_net_cash_provided_by_operating_activities
-    @NetCashProvidedByOperatingActivities = check_and_merge([
-      has_result(@result, :NetCashProvidedByUsedInOperatingActivities),
-      has_result(@result, :CashFlowsFromOperatingActivitiesUS),
-      has_result(@result, :CashFlowsFromOperatingActivitiesIFRS)
-    ])
-  end
-
-  def set_capital_expenditure
-    @CapitalExpenditure = check_and_merge([
-      has_result(@result, :PurchaseOfPropertyPlantAndEquipmentInvCF),
-      has_result(@result, :PurchaseOfIntangibleAssetsInvCF),
-      has_result(@result, :PurchaseOfPropertyPlantAndEquipmentAndIntangibleAssetsInvCF)
-    ])
-  end
-
-  def set_purchase_of_treasury
-    @PurchasesOfStockForTreasury = check_and_merge([
-      has_result(@result, :PurchaseOfTreasuryStockTS)
-    ])
-  end
-
-  def set_dividend
-    @Dividends = check_and_merge([
-      has_result(@result, :CashDividendsPaidFinCF)
-    ])
-  end
-
-  def set_name_representative
-    @NameRepresentative = has_result(@result, :NameRepresentative)
-  end
-
-  def set_stock_price
-    @stockPrice = StockPriceGetter.new(@stock_code, Date.today.year, 6).stockPrices
-  end
 end

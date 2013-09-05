@@ -52,5 +52,3 @@ class XbrlUnziper
   end
   private :search_zip
 end
-
-XbrlUnziper.unzip("/Users/ea54595/Documents/Xbrl")

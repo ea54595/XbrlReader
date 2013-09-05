@@ -12,9 +12,9 @@ EDINET = "edinetx/"
 
 class XbrlDownloader
 
-  def initialize(stock_codes)
+  def initialize(stock_codes, down_path)
     @stock_codes = stock_codes
-    @base_path = "/Users/ea54595/Documents/Xbrl"
+    @base_path = down_path
     get_xbrl_form_tdnet stock_codes
     get_xbrl_form_edinet stock_codes
   end
@@ -92,5 +92,3 @@ class XbrlDownloader
   private :rest_ufo_catch
 
 end
-
-a = XbrlDownloader.new([8058,8031,8053])
