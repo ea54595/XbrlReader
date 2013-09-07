@@ -19,7 +19,7 @@ class FinancialData
     set_edinet(xbrl_paths.edinetXbrl)
     set_tdnet(xbrl_paths.tdnetXbrl)  
     merge_data
-    binding.pry
+    #binding.pry
   end
 
   def output_csv(is_full_data = false)
@@ -135,7 +135,7 @@ class FinancialData
     puts "exit output csv"
   end
 
-  private
+# ==private methods===
   def insert_csv(val,labels)
     out_data = []
     out_data << val[0][:name] || ""
@@ -153,6 +153,7 @@ class FinancialData
     end
     out_data
   end
+  private :insert_csv
 
   def set_edinet(edinet_file_path)
     edinet_file_path.each do |file_path|
@@ -162,6 +163,7 @@ class FinancialData
       b.xbrlYear <=> a.xbrlYear
     end
   end
+  private :set_edinet
 
   def set_tdnet(tdnet_file_path)
     tdnet_file_path.each do |file_path|
@@ -171,17 +173,20 @@ class FinancialData
       b.xbrlYear <=> a.xbrlYear
     end
   end
+  private :set_tdnet
 
   def merge_data
     store_data(@edinet)
     store_data(@tdnet)
   end
+  private :merge_data
 
   def store_data(xbrls)
     xbrls.each do |xbrl_val|
       merge_xbrls(xbrl_val)
     end
   end
+  private :store_data
 
   def get_prior_duration(xbrl_val)
     if xbrl_val.files == "edinet"
@@ -189,6 +194,7 @@ class FinancialData
     end
     :PriorYearNonConsolidatedDuration
   end
+  private :get_prior_duration
 
   def merge_xbrls(xbrl_val)
     xbrl_val.items.each do |val|
@@ -200,6 +206,7 @@ class FinancialData
       end
     end
   end
+  private :merge_xbrls
 
   def set_unexist_result(xbrl_val, val)
     result = []
@@ -222,6 +229,7 @@ class FinancialData
     end
     @result << result
   end
+  private :set_unexist_result
 
   def set_exist_result(xbrl_val, val, exist_index)
     exist_values = @result[exist_index]
@@ -245,4 +253,5 @@ class FinancialData
     end
     @result[exist_index] = exist_values
   end
+  private :set_exist_result
 end

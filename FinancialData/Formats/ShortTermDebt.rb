@@ -1,13 +1,12 @@
-require_relative 'FommatterModule'
+require_relative 'Formats'
 
-class ShortTermDebt
-  include FommatterModule
+class ShortTermDebt < Formats
   
-  def self.calcuate(result)
+  def self.calculate(result)
     check_and_merge([
       get_item_form_result(result, :ShortTermLoansPayable),
       get_item_form_result(result, :CurrentPortionOfLongTermLoansPayable),
-      get_item_form_result(result, :CurrentPortionOfBonds),
+      get_item_form_result(result, :CurrentPortionOfBonds)
     ])
   end
 end

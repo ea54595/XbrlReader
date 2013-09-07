@@ -1,92 +1,35 @@
-require 'jpstock'
-
-class StockPrice
-  def self.calculate(stockCode)
-    
-  end
-
-end
-
-
 # -- coding: utf-8
-require "open-uri"
-require "nokogiri"
+require 'jpstock'
 require "pry"
 
-class StockPriceGetter
-  def initialize(stockCode, years, times)
-      @stockCode = stockCode
-      @stockPrices = []
-      @years = years
-      @times = times
-      set_stock_prices
+class StockPrice
+  def self.calculate(stock_code)
+    get_prices stock_code
   end
-  attr_reader :stockCode, :stockPrices
 
-  private 
-  def set_stock_prices
-    @month = Date.today.mon
-    @day = Date.today.mday
-    i = 0 
-    until i >= @times
-      scrape(i)
-      i += 1
+  def self.get_prices(stock_code)
+    year = Date.today.year
+    month = Date.today.mon
+    day = Date.today.mday
+    count = 0
+    stock_prices = []
+    
+    5.times do
+      stock_prices << get_price(stock_code,Date.new(year + count ,month,day))
+      count += -1
     end
+    
+    stock_prices
   end
-
-  def scrape(i)
-    before_and_after = 0
-    scraped = get_scraped(get_page(@years -i, @month, @day))
-    if scraped.empty?
-      result = get_before_or_after_price(i)
-      scraped = result[:result]
-      before_and_after = result[:before_and_after]
+  private_class_method :get_prices
+  
+  def self.get_price(stock_code, date)
+    result = JpStock.historical_prices(:code=> stock_code, :start_date => date, :end_date=> date)
+    while result.empty?
+      date += -1
+      result = JpStock.historical_prices(:code=> stock_code, :start_date => date, :end_date=> date)
     end
-    stock_price = scraped.children[1].children[6].text
-    @stockPrices << {(@years -i).to_s + "/" + @month.to_s + "/" + (@day + before_and_after).to_s => stock_price }
+    result[0]
   end
-
-  def get_page(years, month, day)
-    begin
-        page = open("http://info.finance.yahoo.co.jp/history/?code=#{@stockCode}.T&sy=#{years}&sm=#{month}&sd=#{day}&ey=#{years}&em=#{month}&ed=#{day}&tm=d")
-    rescue OpenURI::HTTPError
-      puts "Error:Can't get page"
-      return 
-    end
-    page
-  end
-
-  def get_scraped(page)
-    html = Nokogiri::HTML(page.read, nil, 'utf-8')
-    html.search("//table [@class='boardFin yjSt marB6']")
-  end
-
-  def get_former_day(i)
-    j = -1
-    result = []
-    until !result.empty?
-      result = get_scraped(get_page(@years -i, @month, @day + j))
-      j -= 1
-    end
-    {result: result, before_and_after: j }
-  end
-
-  def get_after_day(i)
-    j = 1
-    result = []
-    until !result.empty?
-      result = get_scraped(get_page(@years -i, @month, @day + j))
-      j += 1
-    end
-    {result: result, before_and_after: j }
-  end
-
-  def get_before_or_after_price(i)
-    if @day == 1
-      result = get_after_day(i)
-    else
-      result = get_former_day(i)
-    end
-    result
-  end
+  private_class_method :get_price
 end

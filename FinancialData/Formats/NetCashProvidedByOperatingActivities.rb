@@ -1,14 +1,13 @@
-require_relative 'FommatterModule'
+require_relative 'Formats'
 
-class NetCashProvidedByOperatingActivities
-  include FommatterModule
+class NetCashProvidedByOperatingActivities < Formats
+    
+  def self.calculate(result)
     value = (
       get_item_form_result(result, :NetCashProvidedByUsedInOperatingActivities) ||
       get_item_form_result(result, :CashFlowsFromOperatingActivitiesUS) ||
       get_item_form_result(result, :CashFlowsFromOperatingActivitiesIFRS)
     )
-      
-  def self.calcuate(result)
     check_and_merge([
       value  
     ])

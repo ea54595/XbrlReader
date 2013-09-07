@@ -1,16 +1,14 @@
-require_relative 'FommatterModule'
+require_relative 'Formats'
 
-class EarningsPerShare
-  include FommatterModule
+class EarningsPerShare < Formats
   
-  def self.calcuate(result)
+  def self.calculate(result)
     
     value = (get_item_form_result(result, :NetIncomePerShare) ||
       get_item_form_result(result, :NetIncomePerShareUS) ||
       get_item_form_result(result, :BasicEarningsPerShareIFRS)
     )
     check_and_merge([
-    ])
       value 
     ])
   end

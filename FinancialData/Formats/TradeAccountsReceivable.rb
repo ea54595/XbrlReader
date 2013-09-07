@@ -1,12 +1,11 @@
-require_relative 'FommatterModule'
+require_relative 'Formats'
 
-class TradeAccountsReceivable
-  include FommatterModule
+class TradeAccountsReceivable < Formats
 
-  def self.calcuate(result)
+  def self.calculate(result)
     check_and_merge([
       get_item_form_result(result, :NotesAndAccountsReceivableTrade),
-      get_item_form_result(result, :AccountsReceivableTrade),
+      get_item_form_result(result, :AccountsReceivableTrade)
     ])
   end
 end

@@ -1,9 +1,8 @@
-require_relative 'FommatterModule'
+require_relative 'Formats'
 
-class LongTermDebt
-  include FommatterModule
+class LongTermDebt < Formats
   
-  def self.calcuate(result)
+  def self.calculate(result)
     check_and_merge([
       get_item_form_result(result, :BondsPayable),
       get_item_form_result(result, :ConvertibleBondTypeBondsWithSubscriptionRightsToShares),

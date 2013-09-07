@@ -1,9 +1,8 @@
-require_relative 'FommatterModule'
+require_relative 'Formats'
 
-class NetOperationgRevenues
-  include FommatterModule
+class NetOperationgRevenues < Formats
   
-  def self.calcuate(result)
+  def self.calculate(result)
 
     value = get_item_form_result(result, :NetSales) || get_item_form_result(result, :OperatingRevenue1)
     

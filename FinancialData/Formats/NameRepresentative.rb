@@ -1,12 +1,11 @@
-require_relative 'FommatterModule'
+require_relative 'Formats'
 
-class NameRepresentative
-  include FommatterModule
+class NameRepresentative < Formats
   
-  def self.calcuate(result)
-    check_and_merge([
+  def self.calculate(result)
+    parse_representive(
       get_item_form_result(result, :NameRepresentative)
-    ])
+    )
   end
 
 end

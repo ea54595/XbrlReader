@@ -1,9 +1,8 @@
-require_relative 'FommatterModule'
+require_relative 'Formats'
 
-class CostOfSales
-  include FommatterModule
+class CostOfSales < Formats
   
-  def self.calcuate(result)
+  def self.calculate(result)
     value = get_item_form_result(result, :CostOfSales) || get_item_form_result(result, :OperatingExpenses2)
 
     check_and_merge([

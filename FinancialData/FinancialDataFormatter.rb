@@ -69,7 +69,7 @@ class FinancialDataFormatter
     @PurchasesOfStockForTreasury = PurchasesOfStockForTreasury.calculate(result)
     @Dividends = Dividends.calculate(result)
     @NameRepresentative = NameRepresentative.calculate(result)
-    @StockPrice = StockPrice.calculate(stock_code)
+    @StockPrice = StockPrice.calculate(stock_code.to_s)
   end
 
   def output_csv
@@ -95,7 +95,7 @@ class FinancialDataFormatter
       csv << inset_csv(@AccountsPayableAndAccrued, labels,"仕入債務")
       csv << inset_csv(@ShortTermDebt, labels,"短期借入金")
       csv << inset_csv(@LongTermDebt, labels,"長期借入金")
-      csv << inset_csv(@TotalCurrentLiabikities, labels,"総負債")
+      csv << inset_csv(@TotalCurrentLiabilities, labels,"総負債")
       csv << inset_csv(@TreasuryStock, labels,"自己株式")
       csv << inset_csv(@ShareholdersEquity, labels,"株主資本")
       csv << inset_csv(@TotalEquity, labels,"純資産")
@@ -119,34 +119,30 @@ class FinancialDataFormatter
       csv << inset_csv(@Dividends, labels ,"配当額")
 
       csv << inset_csv_sjis(@NameRepresentative, labels ,"代表取締役社長")
+      csv << insert_csv_stock_price_day
       csv << insert_csv_stock_price
     end
     puts "exit output csv"
   end
 
+  def insert_csv_stock_price_day
+    col = []
+    col << "株価取得日".tosjis
+    @StockPrice.each do |day|
+      col << day.date.strftime("%Y/%m/%d")
+    end
+    col    
+  end
+
   def insert_csv_stock_price
     col = []
     col << "株価".tosjis
-    @stockPrice.each do |k|
-      col << k.values[0]
+    @StockPrice.each do |price|
+      col << price.close
     end
     col
   end
   private :insert_csv_stock_price
-
-  def parse_float(v) 
-    if v == nil
-      return 0
-    end
-    if v.kind_of?(Symbol)
-      v = v.id2name
-    end
-    unless v.kind_of?(String)
-      return v
-    end
-    v.to_f
-  end
-  private :parse_float
 
   def inset_csv(values, labels, name)
     col = []
@@ -157,11 +153,13 @@ class FinancialDataFormatter
       end
       return col
     end   
+    
     labels.each do |l|
       if l == "項目名".tosjis
         next
       end
-      if values[l] != nil
+
+      if values.key?(l)
         col << values[l]
       else
         col << ""
@@ -178,9 +176,8 @@ class FinancialDataFormatter
       if l == "項目名".tosjis
         next
       end
-      i = values.index{ |v| v[:year] == l }
-      if !i.nil?
-        col << values[i][:value].id2name.tosjis
+      if values.key?(l)
+        col << values[l].tosjis
       else
         col << ""
       end

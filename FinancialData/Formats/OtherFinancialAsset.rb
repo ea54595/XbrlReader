@@ -1,11 +1,11 @@
-require_relative 'FommatterModule'
+require_relative 'Formats'
 
-class OtherFinancialAsset
-  include
+class OtherFinancialAsset < Formats
+  
   def self.calculate(result)
     check_and_merge([
       get_item_form_result(result, :ShortTermInvestmentSecurities),
-      get_item_form_result(result, :OperationalInvestmentSecuritiesCA),
+      get_item_form_result(result, :OperationalInvestmentSecuritiesCA)
     ])
   end
 end
